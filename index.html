@@ -182,14 +182,14 @@
                 <p id="section-subtitle" class="text-center text-lc-muted italic text-sm hidden"></p>
             </header>
 
-            <div id="price-header" class="hidden max-w-md mx-auto mb-3 flex items-center justify-end gap-8 text-xs tracking-widest uppercase text-lc-muted font-display border-b border-lc-dark/30 pb-1.5">
-                <span>Media ración</span><span>Ración</span>
-            </div>
-            <div id="wine-header" class="hidden max-w-md mx-auto mb-3 flex items-center justify-end gap-10 text-xs tracking-widest uppercase text-lc-muted font-display border-b border-lc-dark/30 pb-1.5">
-                <span>Copa</span><span>Botella</span>
-            </div>
+            <p id="price-header" class="hidden text-center text-xs tracking-[0.3em] uppercase text-lc-muted font-display mb-4">
+                <span>Media ración</span> · <span>Ración</span>
+            </p>
+            <p id="wine-header" class="hidden text-center text-xs tracking-[0.3em] uppercase text-lc-muted font-display mb-4">
+                <span>Copa</span> · <span>Botella</span>
+            </p>
 
-            <ul id="list-items" class="space-y-3 max-w-md mx-auto"></ul>
+            <ul id="list-items" class="grid grid-cols-2 gap-3 sm:gap-4"></ul>
         </section>
 
     </main>
@@ -208,6 +208,11 @@
 
             <h2 id="detail-name" class="font-display text-3xl sm:text-4xl text-lc-dark text-center leading-tight uppercase tracking-wide mb-6">
             </h2>
+
+            <div id="detail-img-wrap" class="hidden mb-6 rounded-3xl overflow-hidden border-4 border-lc-card shadow-2xl ring-1 ring-lc-dark/10 aspect-[4/3]">
+                <img id="detail-img" src="" alt="" class="w-full h-full object-cover"
+                     onerror="this.parentElement.classList.add('hidden');">
+            </div>
 
             <div class="paper rounded-2xl border border-lc-dark/15 shadow-md p-6 sm:p-8 mb-6">
 
@@ -247,87 +252,89 @@
             { id: 'Extras',         tagline: 'Panes y salseras' }
         ];
 
+        const IMG = (slug) => `imagenes/${slug}.webp`;
+
         const platos = [
             // ---------------- ENTRANTES (media / ración) ----------------
-            { categoria:'Entrantes', nombre:'Patatas Bravas',              precioMedia:'7 €', precioRacion:'10 €' },
-            { categoria:'Entrantes', nombre:'Patatas Alioli',              precioMedia:'7 €', precioRacion:'10 €' },
-            { categoria:'Entrantes', nombre:'Berenjenas a la miel de caña', precioMedia:'6 €', precioRacion:'10 €' },
-            { categoria:'Entrantes', nombre:'Gambas al ajillo',            precioMedia:'8 €', precioRacion:'13 €' },
+            { categoria:'Entrantes', foto:IMG('patatas-bravas'),   nombre:'Patatas Bravas',              precioMedia:'7 €', precioRacion:'10 €' },
+            { categoria:'Entrantes', foto:IMG('patatas-alioli'),   nombre:'Patatas Alioli',              precioMedia:'7 €', precioRacion:'10 €' },
+            { categoria:'Entrantes', foto:IMG('berenjenas-miel'),  nombre:'Berenjenas a la miel de caña', precioMedia:'6 €', precioRacion:'10 €' },
+            { categoria:'Entrantes', foto:IMG('gambas-ajillo'),    nombre:'Gambas al ajillo',            precioMedia:'8 €', precioRacion:'13 €' },
 
             // ---------------- ENSALADAS --------------------------------
-            { categoria:'Ensaladas', nombre:'Ensalada Mixta', precio:'7 €',
+            { categoria:'Ensaladas', foto:IMG('ensalada-mixta'), nombre:'Ensalada Mixta', precio:'7 €',
               ingredientes:'Lechuga, tomate, huevo duro, remolacha, ensalada china, espárragos, aceitunas y atún.' },
-            { categoria:'Ensaladas', nombre:'Ensalada Especial de la Casa', precio:'10 €',
+            { categoria:'Ensaladas', foto:IMG('ensalada-casa'), nombre:'Ensalada Especial de la Casa', precio:'10 €',
               ingredientes:'Lechuga, tomate, huevo duro, remolacha, ensalada china, queso fresco, piña, melocotón, jamón cocido, atún y frutos secos.' },
-            { categoria:'Ensaladas', nombre:'Ensalada Refrescante', precio:'8 €',
+            { categoria:'Ensaladas', foto:IMG('ensalada-refrescante'), nombre:'Ensalada Refrescante', precio:'8 €',
               ingredientes:'Lechuga, tomate, huevo duro, remolacha, ensalada china, queso fresco, espárragos, nueces y atún.' },
 
             // ---------------- REVUELTOS Y TORTILLAS ---------------------
-            { categoria:'Revueltos y Tortillas', nombre:'Revuelto Campestre', precio:'10 €',
+            { categoria:'Revueltos y Tortillas', foto:IMG('revuelto-campestre'), nombre:'Revuelto Campestre', precio:'10 €',
               ingredientes:'Espárragos, champiñón, gambas y jamón.' },
-            { categoria:'Revueltos y Tortillas', nombre:'Revuelto de Bacalao con Gambas', precio:'12 €' },
-            { categoria:'Revueltos y Tortillas', nombre:'Revuelto de Setas a la Montillana', precio:'10 €',
+            { categoria:'Revueltos y Tortillas', foto:IMG('revuelto-bacalao'),   nombre:'Revuelto de Bacalao con Gambas', precio:'12 €' },
+            { categoria:'Revueltos y Tortillas', foto:IMG('revuelto-setas'),     nombre:'Revuelto de Setas a la Montillana', precio:'10 €',
               ingredientes:'Setas, gambas y jamón.' },
 
             // ---------------- CARNES -----------------------------------
-            { categoria:'Carnes', nombre:'Filete de Pollo a la Plancha', precio:'10 €',
+            { categoria:'Carnes', foto:IMG('filete-pollo-plancha'), nombre:'Filete de Pollo a la Plancha', precio:'10 €',
               ingredientes:'Con patatas fritas.' },
-            { categoria:'Carnes', nombre:'Pollo en Salsa Roquefort', precio:'13 €',
+            { categoria:'Carnes', foto:IMG('pollo-roquefort'), nombre:'Pollo en Salsa Roquefort', precio:'13 €',
               ingredientes:'Acompañado de patatas.' },
-            { categoria:'Carnes', nombre:'Pluma Ibérica de Bellota', precio:'18 €',
+            { categoria:'Carnes', foto:IMG('pluma-iberica'), nombre:'Pluma Ibérica de Bellota', precio:'18 €',
               ingredientes:'Con patatas y guarnición.' },
-            { categoria:'Carnes', nombre:'Presa Ibérica de Bellota', precio:'18 €',
+            { categoria:'Carnes', foto:IMG('presa-iberica'), nombre:'Presa Ibérica de Bellota', precio:'18 €',
               ingredientes:'Con patatas y guarnición.' },
-            { categoria:'Carnes', nombre:'Abanico Ibérico de Bellota', precio:'17 €',
+            { categoria:'Carnes', foto:IMG('abanico-iberico'), nombre:'Abanico Ibérico de Bellota', precio:'17 €',
               ingredientes:'Con patatas y guarnición.' },
-            { categoria:'Carnes', nombre:'Solomillo de Cerdo', precio:'12 €',
+            { categoria:'Carnes', foto:IMG('solomillo-cerdo'), nombre:'Solomillo de Cerdo', precio:'12 €',
               ingredientes:'Con patatas y guarnición.' },
-            { categoria:'Carnes', nombre:'Solomillo de Cerdo a la Salsa Roquefort', precio:'15 €',
+            { categoria:'Carnes', foto:IMG('solomillo-roquefort'), nombre:'Solomillo de Cerdo a la Salsa Roquefort', precio:'15 €',
               ingredientes:'Acompañado de patatas.' },
-            { categoria:'Carnes', nombre:'Solomillo al Pedro Ximénez', precio:'16 €',
+            { categoria:'Carnes', foto:IMG('solomillo-px'), nombre:'Solomillo al Pedro Ximénez', precio:'16 €',
               ingredientes:'Con patatas.' },
-            { categoria:'Carnes', nombre:'Carrillada Ibérica de Bellota en Salsa', precio:'15 €',
+            { categoria:'Carnes', foto:IMG('carrillada-iberica'), nombre:'Carrillada Ibérica de Bellota en Salsa', precio:'15 €',
               ingredientes:'Con patatas.' },
 
             // ---------------- PESCADOS ---------------------------------
-            { categoria:'Pescados', nombre:'Timbal de Salmón', precio:'12 €',
+            { categoria:'Pescados', foto:IMG('timbal-salmon'),       nombre:'Timbal de Salmón', precio:'12 €',
               ingredientes:'Salmón ahumado, tomate, aguacate y reducción de PX.' },
-            { categoria:'Pescados', nombre:'Calamaritos a la Plancha', precio:'11 €' },
-            { categoria:'Pescados', nombre:'Rosada en Salsa de Gambas y Almejas', precio:'14 €' },
-            { categoria:'Pescados', nombre:'Atún a la Plancha', precio:'13 €',
+            { categoria:'Pescados', foto:IMG('calamaritos-plancha'), nombre:'Calamaritos a la Plancha', precio:'11 €' },
+            { categoria:'Pescados', foto:IMG('rosada-gambas'),       nombre:'Rosada en Salsa de Gambas y Almejas', precio:'14 €' },
+            { categoria:'Pescados', foto:IMG('atun-plancha'),        nombre:'Atún a la Plancha', precio:'13 €',
               ingredientes:'Con guarnición.' },
 
             // ---------------- FREIDURÍA (media / ración) ----------------
-            { categoria:'Freiduría', nombre:'Croquetas de Pollo Caseras',     precioMedia:'6 €', precioRacion:'10 €' },
-            { categoria:'Freiduría', nombre:'Croquetas de Bacalao con Gambas',precioMedia:'6 €', precioRacion:'10 €' },
-            { categoria:'Freiduría', nombre:'Croquetas de Espinacas, Queso de Cabra y Piñones', precioMedia:'6 €', precioRacion:'10 €' },
-            { categoria:'Freiduría', nombre:'Lagrimitas de Pollo',            precioMedia:'5 €', precioRacion:'9 €' },
-            { categoria:'Freiduría', nombre:'Filetes de Pollo Empanado',                                            precioRacion:'10 €' },
-            { categoria:'Freiduría', nombre:'Calamaritos Fritos',             precioMedia:'8 €', precioRacion:'12 €' },
-            { categoria:'Freiduría', nombre:'Boquerones Fritos',              precioMedia:'7 €', precioRacion:'10 €' },
-            { categoria:'Freiduría', nombre:'Bacalao Frito',                  precioMedia:'8 €', precioRacion:'12 €' },
-            { categoria:'Freiduría', nombre:'Flamenquín Casero',                                                    precioRacion:'11 €' },
-            { categoria:'Freiduría', nombre:'San Jacobo al Roquefort Casero',                                       precioRacion:'12 €' },
+            { categoria:'Freiduría', foto:IMG('croquetas-pollo'),         nombre:'Croquetas de Pollo Caseras',     precioMedia:'6 €', precioRacion:'10 €' },
+            { categoria:'Freiduría', foto:IMG('croquetas-bacalao'),       nombre:'Croquetas de Bacalao con Gambas',precioMedia:'6 €', precioRacion:'10 €' },
+            { categoria:'Freiduría', foto:IMG('croquetas-espinacas'),     nombre:'Croquetas de Espinacas, Queso de Cabra y Piñones', precioMedia:'6 €', precioRacion:'10 €' },
+            { categoria:'Freiduría', foto:IMG('lagrimitas-pollo'),        nombre:'Lagrimitas de Pollo',            precioMedia:'5 €', precioRacion:'9 €' },
+            { categoria:'Freiduría', foto:IMG('filetes-pollo-empanado'),  nombre:'Filetes de Pollo Empanado',                                            precioRacion:'10 €' },
+            { categoria:'Freiduría', foto:IMG('calamaritos-fritos'),      nombre:'Calamaritos Fritos',             precioMedia:'8 €', precioRacion:'12 €' },
+            { categoria:'Freiduría', foto:IMG('boquerones-fritos'),       nombre:'Boquerones Fritos',              precioMedia:'7 €', precioRacion:'10 €' },
+            { categoria:'Freiduría', foto:IMG('bacalao-frito'),           nombre:'Bacalao Frito',                  precioMedia:'8 €', precioRacion:'12 €' },
+            { categoria:'Freiduría', foto:IMG('flamenquin'),              nombre:'Flamenquín Casero',                                                    precioRacion:'11 €' },
+            { categoria:'Freiduría', foto:IMG('san-jacobo'),              nombre:'San Jacobo al Roquefort Casero',                                       precioRacion:'12 €' },
 
             // ---------------- POSTRES ----------------------------------
-            { categoria:'Postres', nombre:'Postres del día', precio:'—',
-              note:'Consultar camarero.' },
+            { categoria:'Postres', foto:IMG('postres'), nombre:'Postres del día', precio:'—',
+              note:'Consultar camarero — tarta del día, casera, helados y más.' },
 
             // ---------------- VINOS (copa / botella) -------------------
-            { categoria:'Vinos', nombre:'D.O. Rioja — Derroción Joven',          precioCopa:'2,80 €', precioBotella:'12 €' },
-            { categoria:'Vinos', nombre:'D.O. Rioja — Azabache Crianza',         precioCopa:'3,80 €', precioBotella:'18 €' },
-            { categoria:'Vinos', nombre:'D.O. Ribera del Duero — La Veguilla Roble', precioCopa:'3,80 €', precioBotella:'15 €' },
-            { categoria:'Vinos', nombre:'Blanco D.O. Rueda — Semidulce Castillo Miraflores', precioCopa:'3,20 €', precioBotella:'14 €' },
-            { categoria:'Vinos', nombre:'Blanco D.O. Rueda — Verdejo Mortiga',   precioCopa:'2,80 €', precioBotella:'12 €' },
-            { categoria:'Vinos', nombre:'D.O. Montilla-Moriles — Cobos (Fino)',  precioCopa:'1,20 €', precioBotella:'9 €' },
-            { categoria:'Vinos', nombre:'D.O. Montilla-Moriles — Tertulia (En rama)', precioCopa:'1,50 €', precioBotella:'11 €' },
+            { categoria:'Vinos', foto:IMG('vino-rioja'),         nombre:'D.O. Rioja — Derroción Joven',          precioCopa:'2,80 €', precioBotella:'12 €' },
+            { categoria:'Vinos', foto:IMG('vino-rioja'),         nombre:'D.O. Rioja — Azabache Crianza',         precioCopa:'3,80 €', precioBotella:'18 €' },
+            { categoria:'Vinos', foto:IMG('vino-ribera'),        nombre:'D.O. Ribera del Duero — La Veguilla Roble', precioCopa:'3,80 €', precioBotella:'15 €' },
+            { categoria:'Vinos', foto:IMG('vino-rueda-blanco'),  nombre:'Blanco D.O. Rueda — Semidulce Castillo Miraflores', precioCopa:'3,20 €', precioBotella:'14 €' },
+            { categoria:'Vinos', foto:IMG('vino-rueda-blanco'),  nombre:'Blanco D.O. Rueda — Verdejo Mortiga',   precioCopa:'2,80 €', precioBotella:'12 €' },
+            { categoria:'Vinos', foto:IMG('vino-montilla'),      nombre:'D.O. Montilla-Moriles — Cobos (Fino)',  precioCopa:'1,20 €', precioBotella:'9 €' },
+            { categoria:'Vinos', foto:IMG('vino-montilla'),      nombre:'D.O. Montilla-Moriles — Tertulia (En rama)', precioCopa:'1,50 €', precioBotella:'11 €' },
 
             // ---------------- EXTRAS -----------------------------------
-            { categoria:'Extras', nombre:'Canasta de Pan / Bautilos',     precio:'1,80 €' },
-            { categoria:'Extras', nombre:'Salsera de Alioli / Brava',     precio:'1,00 €' },
-            { categoria:'Extras', nombre:'Salsera de Roquefort',          precio:'0,80 €' },
-            { categoria:'Extras', nombre:'Salsera de Mayonesa',           precio:'0,80 €' },
-            { categoria:'Extras', nombre:'Salsera de Salsa Verde',        precio:'1,00 €' },
+            { categoria:'Extras', foto:IMG('pan'),               nombre:'Canasta de Pan / Bautilos',     precio:'1,80 €' },
+            { categoria:'Extras', foto:IMG('salsera-alioli'),    nombre:'Salsera de Alioli / Brava',     precio:'1,00 €' },
+            { categoria:'Extras', foto:IMG('salsera-roquefort'), nombre:'Salsera de Roquefort',          precio:'0,80 €' },
+            { categoria:'Extras', foto:IMG('salsera-mayonesa'),  nombre:'Salsera de Mayonesa',           precio:'0,80 €' },
+            { categoria:'Extras', foto:IMG('salsera-verde'),     nombre:'Salsera de Salsa Verde',        precio:'1,00 €' },
         ];
 
         // Assign deterministic ids
@@ -357,22 +364,23 @@
             `).join('');
         }
 
-        function priceRow(p) {
+        function priceTag(p) {
+            // Compact price label for the dish card (single line)
             if (p.precioCopa || p.precioBotella) {
-                return `
-                    <div class="flex items-baseline gap-8 sm:gap-10 text-lc-burg">
-                        <span class="font-display text-lg sm:text-xl tracking-wide w-[3.5rem] text-right">${escapeHtml(p.precioCopa || '—')}</span>
-                        <span class="font-display text-lg sm:text-xl tracking-wide w-[3.5rem] text-right">${escapeHtml(p.precioBotella || '—')}</span>
-                    </div>`;
+                return `<div class="flex items-baseline justify-center gap-1 text-lc-burg font-display text-base sm:text-lg">
+                    <span>${escapeHtml(p.precioCopa || '—')}</span>
+                    <span class="text-lc-muted/60 text-xs">/</span>
+                    <span>${escapeHtml(p.precioBotella || '—')}</span>
+                </div>`;
             }
             if (p.precioMedia || p.precioRacion) {
-                return `
-                    <div class="flex items-baseline gap-8 sm:gap-10 text-lc-burg">
-                        <span class="font-display text-lg sm:text-xl tracking-wide w-[3.5rem] text-right">${escapeHtml(p.precioMedia || '—')}</span>
-                        <span class="font-display text-lg sm:text-xl tracking-wide w-[3.5rem] text-right">${escapeHtml(p.precioRacion || '—')}</span>
-                    </div>`;
+                return `<div class="flex items-baseline justify-center gap-1 text-lc-burg font-display text-base sm:text-lg">
+                    <span>${escapeHtml(p.precioMedia || '—')}</span>
+                    <span class="text-lc-muted/60 text-xs">/</span>
+                    <span>${escapeHtml(p.precioRacion || '—')}</span>
+                </div>`;
             }
-            return `<div class="font-display text-lg sm:text-xl text-lc-burg tracking-wide whitespace-nowrap">${escapeHtml(p.precio || '')}</div>`;
+            return `<div class="font-display text-lg sm:text-xl text-lc-burg text-center">${escapeHtml(p.precio || '')}</div>`;
         }
 
         function openCategory(catId) {
@@ -400,14 +408,19 @@
             list.innerHTML = items.map(p => `
                 <li>
                     <button onclick="openDetail(${p.id})"
-                        class="w-full text-left bg-lc-card border border-lc-dark/15 rounded-xl px-4 py-3 sm:px-5 sm:py-4 shadow-sm hover:shadow-md hover:border-lc-accent/60 active:scale-[0.99] transition flex items-baseline gap-3">
-                        <span class="font-body text-lg sm:text-xl text-lc-dark leading-snug">${escapeHtml(p.nombre)}</span>
-                        <span class="dot-leader" aria-hidden="true"></span>
-                        ${priceRow(p)}
+                        class="dish-card w-full text-left bg-lc-card border border-lc-dark/15 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:border-lc-accent/60 active:scale-[0.98] transition flex flex-col">
+                        <div class="relative aspect-[4/3] overflow-hidden bg-lc-bg">
+                            <img src="${escapeHtml(p.foto || '')}" alt="${escapeHtml(p.nombre)}" loading="lazy"
+                                 class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                                 onerror="this.style.opacity=0.15;this.alt='';this.src='logo.svg';this.classList.remove('object-cover');this.classList.add('object-contain','p-6');">
+                        </div>
+                        <div class="p-3 sm:p-4 flex-1 flex flex-col items-center text-center gap-2">
+                            <h3 class="font-body font-semibold text-base sm:text-lg text-lc-dark leading-tight">${escapeHtml(p.nombre)}</h3>
+                            ${priceTag(p)}
+                        </div>
                     </button>
-                    ${p.ingredientes ? `<p class="font-body italic text-sm text-lc-muted px-5 mt-1 leading-relaxed">${escapeHtml(p.ingredientes)}</p>` : ''}
                 </li>
-            `).join('') || '<li class="text-center italic text-lc-muted py-10">Próximamente.</li>';
+            `).join('') || '<li class="col-span-2 text-center italic text-lc-muted py-10">Próximamente.</li>';
 
             history.pushState({ view: 'items', cat: catId }, '');
             window.scrollTo({top: 0, behavior: 'instant'});
@@ -426,6 +439,16 @@
             if (!p) return;
             $('detail-cat').innerText = p.categoria;
             $('detail-name').innerText = p.nombre;
+            const imgWrap = $('detail-img-wrap');
+            const imgEl = $('detail-img');
+            if (p.foto) {
+                imgEl.src = p.foto;
+                imgEl.alt = p.nombre;
+                imgWrap.classList.remove('hidden');
+            } else {
+                imgWrap.classList.add('hidden');
+                imgEl.removeAttribute('src');
+            }
 
             const priceBlocks = [];
             if (p.precioCopa || p.precioBotella) {
