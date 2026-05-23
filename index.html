@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar Los Caballos | Carta</title>
+    <meta name="description" content="Carta digital de Bar Los Caballos. Entrantes, carnes ibéricas, pescados, freiduría, vinos y más.">
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+SC:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --lc-bg: #f1e9d8;
+            --lc-card: #fbf6ec;
+            --lc-dark: #141210;
+            --lc-ink: #1d1815;
+            --lc-muted: #6e5d4a;
+            --lc-accent: #8a6b3a;
+            --lc-accent-soft: #c9b186;
+            --lc-rule: #2a221b;
+            --lc-burgundy: #6b2424;
+        }
+
+        body {
+            background:
+                radial-gradient(1200px 600px at 50% -100px, rgba(138,107,58,0.10), transparent 60%),
+                var(--lc-bg);
+            color: var(--lc-ink);
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 17px;
+        }
+
+        .font-display { font-family: 'Cinzel', 'Cormorant SC', serif; letter-spacing: 0.04em; }
+        .font-script  { font-family: 'Cormorant SC', serif; letter-spacing: 0.06em; }
+        .font-body    { font-family: 'Cormorant Garamond', Georgia, serif; }
+
+        .text-lc-dark   { color: var(--lc-ink); }
+        .text-lc-muted  { color: var(--lc-muted); }
+        .text-lc-accent { color: var(--lc-accent); }
+        .text-lc-burg   { color: var(--lc-burgundy); }
+        .bg-lc-card     { background-color: var(--lc-card); }
+        .bg-lc-dark     { background-color: var(--lc-dark); }
+        .bg-lc-bg       { background-color: var(--lc-bg); }
+        .border-lc-dark { border-color: var(--lc-dark); }
+        .border-lc-accent { border-color: var(--lc-accent); }
+
+        .paper {
+            background-color: var(--lc-card);
+            background-image:
+                radial-gradient(rgba(20,18,16,0.025) 1px, transparent 1px),
+                radial-gradient(rgba(20,18,16,0.03)  1px, transparent 1px);
+            background-size: 6px 6px, 11px 11px;
+            background-position: 0 0, 3px 3px;
+        }
+
+        .dot-leader {
+            flex: 1 1 auto;
+            margin: 0 0.5rem 0.32rem 0.5rem;
+            border-bottom: 1.5px dotted rgba(20,18,16,0.55);
+            min-width: 1.5rem;
+        }
+
+        .category-card {
+            position: relative;
+            background: var(--lc-card);
+            border: 1.5px solid var(--lc-rule);
+            box-shadow:
+                0 1px 0 rgba(20,18,16,0.04),
+                0 8px 18px -10px rgba(20,18,16,0.18);
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+        .category-card:active { transform: scale(0.97); }
+        .category-card::before,
+        .category-card::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--lc-accent), transparent);
+        }
+        .category-card::before { top: 8px; }
+        .category-card::after  { bottom: 8px; }
+
+        .fade-in { animation: fadeIn .35s ease-out both; }
+        @keyframes fadeIn { from {opacity:0; transform: translateY(6px);} to {opacity:1; transform:none;} }
+
+        .hidden-scroll::-webkit-scrollbar { display: none; }
+
+        /* Ornament hr */
+        .ornament {
+            display: flex; align-items: center; justify-content: center;
+            gap: 0.75rem; color: var(--lc-accent); opacity: .85;
+        }
+        .ornament::before, .ornament::after {
+            content: ""; height: 1px; flex: 1; max-width: 80px;
+            background: linear-gradient(90deg, transparent, var(--lc-accent), transparent);
+        }
+
+        /* Drop cap on the section title */
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+        }
+
+        /* Sticky header backdrop */
+        header.lc-header {
+            background:
+                linear-gradient(180deg, rgba(255,253,247,0.96) 0%, rgba(241,233,216,0.85) 100%);
+            backdrop-filter: saturate(140%) blur(6px);
+            -webkit-backdrop-filter: saturate(140%) blur(6px);
+            border-bottom: 1px solid rgba(20,18,16,0.12);
+        }
+
+        /* Modal slide */
+        #detail {
+            transform: translateY(100%);
+            transition: transform .45s cubic-bezier(.2,.7,.2,1);
+        }
+        #detail.open { transform: translateY(0); }
+    </style>
+</head>
+
+<body class="text-lc-dark">
+
+    <!-- HEADER ----------------------------------------------------------- -->
+    <header class="lc-header sticky top-0 z-40">
+        <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-center gap-4 min-h-[5.5rem] relative">
+            <button id="btn-back" onclick="goBack()"
+                class="hidden absolute left-3 top-1/2 -translate-y-1/2 text-xs px-3 py-1.5 rounded-full border border-lc-dark bg-white/70 hover:bg-lc-dark hover:text-white transition font-display tracking-widest uppercase">
+                ← Volver
+            </button>
+
+            <div id="header-brand" class="flex items-center justify-center gap-4 select-none">
+                <img src="logo.svg" alt="" class="h-16 sm:h-20 w-auto" aria-hidden="true">
+                <div class="flex flex-col items-start leading-none">
+                    <span class="font-display text-[10px] sm:text-xs tracking-[0.6em] text-lc-muted uppercase pl-1">Bar</span>
+                    <span class="font-display text-3xl sm:text-4xl font-bold text-lc-dark tracking-[0.08em]">Los Caballos</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN ------------------------------------------------------------- -->
+    <main class="max-w-2xl mx-auto px-4 sm:px-6 pb-24">
+
+        <!-- Vista categorías -->
+        <section id="view-categories" class="fade-in pt-6">
+            <div class="ornament my-6">
+                <span class="font-display text-lg tracking-[0.4em] uppercase">Carta</span>
+            </div>
+
+            <p class="text-center text-lc-muted italic text-base mb-8">
+                Cocina tradicional · Productos de la tierra
+            </p>
+
+            <div id="grid-categories" class="grid grid-cols-2 gap-4 sm:gap-5"></div>
+
+            <div class="ornament my-10">
+                <span class="font-display text-xs tracking-[0.5em] uppercase">· bar los caballos ·</span>
+            </div>
+
+            <p class="text-[12px] text-center text-lc-muted italic px-4 leading-relaxed">
+                Productos elaborados para celíacos e indiferentes a la lactosa: <span class="font-semibold not-italic">consultar camarero</span>.<br>
+                Estos productos pueden contener sustancias alergénicas; si usted es alérgico consulte con los empleados del establecimiento.<br>
+                Tenemos a su disposición las fichas técnicas de los platos.
+            </p>
+        </section>
+
+        <!-- Vista platos -->
+        <section id="view-items" class="hidden fade-in pt-4">
+            <header class="my-6">
+                <div class="ornament mb-3">
+                    <span id="section-title" class="section-title text-xl sm:text-2xl text-lc-dark">CATEGORÍA</span>
+                </div>
+                <p id="section-subtitle" class="text-center text-lc-muted italic text-sm hidden"></p>
+            </header>
+
+            <div id="price-header" class="hidden max-w-md mx-auto mb-3 flex items-center justify-end gap-8 text-xs tracking-widest uppercase text-lc-muted font-display border-b border-lc-dark/30 pb-1.5">
+                <span>Media ración</span><span>Ración</span>
+            </div>
+            <div id="wine-header" class="hidden max-w-md mx-auto mb-3 flex items-center justify-end gap-10 text-xs tracking-widest uppercase text-lc-muted font-display border-b border-lc-dark/30 pb-1.5">
+                <span>Copa</span><span>Botella</span>
+            </div>
+
+            <ul id="list-items" class="space-y-3 max-w-md mx-auto"></ul>
+        </section>
+
+    </main>
+
+    <!-- MODAL DETAIL ----------------------------------------------------- -->
+    <div id="detail" class="fixed inset-0 z-50 bg-lc-bg overflow-y-auto">
+        <button onclick="closeDetail()"
+            class="absolute top-5 right-5 w-11 h-11 rounded-full bg-lc-dark text-white text-xl font-bold shadow-lg hover:scale-105 transition flex items-center justify-center"
+            aria-label="Cerrar">✕</button>
+
+        <div class="max-w-md mx-auto px-6 pt-16 pb-12">
+
+            <div class="ornament mb-2">
+                <span class="font-display text-[11px] tracking-[0.5em] uppercase text-lc-accent" id="detail-cat">PLATO</span>
+            </div>
+
+            <h2 id="detail-name" class="font-display text-3xl sm:text-4xl text-lc-dark text-center leading-tight uppercase tracking-wide mb-6">
+            </h2>
+
+            <div class="paper rounded-2xl border border-lc-dark/15 shadow-md p-6 sm:p-8 mb-6">
+
+                <div id="detail-prices" class="flex items-end justify-center gap-8 sm:gap-12 mb-6">
+                    <!-- filled dynamically -->
+                </div>
+
+                <div id="detail-ingredients-block" class="hidden text-center">
+                    <h4 class="font-display text-[11px] tracking-[0.5em] uppercase text-lc-muted mb-2">Ingredientes</h4>
+                    <p id="detail-ingredients" class="italic text-lc-dark leading-relaxed text-lg"></p>
+                </div>
+
+                <div id="detail-note" class="hidden mt-6 text-center text-sm text-lc-muted italic"></div>
+            </div>
+
+            <button onclick="closeDetail()"
+                class="w-full bg-lc-dark text-white py-4 rounded-full font-display tracking-[0.3em] uppercase text-xs hover:opacity-90 active:scale-95 transition">
+                Regresar a la carta
+            </button>
+
+            <p class="mt-8 text-center font-display text-[11px] tracking-[0.5em] uppercase text-lc-accent/70">· Bar Los Caballos ·</p>
+        </div>
+    </div>
+
+    <!-- DATA + APP ------------------------------------------------------- -->
+    <script>
+        // ---------- DATA ------------------------------------------------
+        const categorias = [
+            { id: 'Entrantes',      tagline: 'Para empezar' },
+            { id: 'Ensaladas',      tagline: 'Frescas y de la casa' },
+            { id: 'Revueltos y Tortillas', tagline: 'Tradición a la sartén' },
+            { id: 'Carnes',         tagline: 'Ibéricos y plancha' },
+            { id: 'Pescados',       tagline: 'Del día' },
+            { id: 'Freiduría', tagline: 'Crujiente y casero' },
+            { id: 'Postres',        tagline: 'Consultar camarero' },
+            { id: 'Vinos',          tagline: 'Selección de la casa' },
+            { id: 'Extras',         tagline: 'Panes y salseras' }
+        ];
+
+        const platos = [
+            // ---------------- ENTRANTES (media / ración) ----------------
+            { categoria:'Entrantes', nombre:'Patatas Bravas',              precioMedia:'7 €', precioRacion:'10 €' },
+            { categoria:'Entrantes', nombre:'Patatas Alioli',              precioMedia:'7 €', precioRacion:'10 €' },
+            { categoria:'Entrantes', nombre:'Berenjenas a la miel de caña', precioMedia:'6 €', precioRacion:'10 €' },
+            { categoria:'Entrantes', nombre:'Gambas al ajillo',            precioMedia:'8 €', precioRacion:'13 €' },
+
+            // ---------------- ENSALADAS --------------------------------
+            { categoria:'Ensaladas', nombre:'Ensalada Mixta', precio:'7 €',
+              ingredientes:'Lechuga, tomate, huevo duro, remolacha, ensalada china, espárragos, aceitunas y atún.' },
+            { categoria:'Ensaladas', nombre:'Ensalada Especial de la Casa', precio:'10 €',
+              ingredientes:'Lechuga, tomate, huevo duro, remolacha, ensalada china, queso fresco, piña, melocotón, jamón cocido, atún y frutos secos.' },
+            { categoria:'Ensaladas', nombre:'Ensalada Refrescante', precio:'8 €',
+              ingredientes:'Lechuga, tomate, huevo duro, remolacha, ensalada china, queso fresco, espárragos, nueces y atún.' },
+
+            // ---------------- REVUELTOS Y TORTILLAS ---------------------
+            { categoria:'Revueltos y Tortillas', nombre:'Revuelto Campestre', precio:'10 €',
+              ingredientes:'Espárragos, champiñón, gambas y jamón.' },
+            { categoria:'Revueltos y Tortillas', nombre:'Revuelto de Bacalao con Gambas', precio:'12 €' },
+            { categoria:'Revueltos y Tortillas', nombre:'Revuelto de Setas a la Montillana', precio:'10 €',
+              ingredientes:'Setas, gambas y jamón.' },
+
+            // ---------------- CARNES -----------------------------------
+            { categoria:'Carnes', nombre:'Filete de Pollo a la Plancha', precio:'10 €',
+              ingredientes:'Con patatas fritas.' },
+            { categoria:'Carnes', nombre:'Pollo en Salsa Roquefort', precio:'13 €',
+              ingredientes:'Acompañado de patatas.' },
+            { categoria:'Carnes', nombre:'Pluma Ibérica de Bellota', precio:'18 €',
+              ingredientes:'Con patatas y guarnición.' },
+            { categoria:'Carnes', nombre:'Presa Ibérica de Bellota', precio:'18 €',
+              ingredientes:'Con patatas y guarnición.' },
+            { categoria:'Carnes', nombre:'Abanico Ibérico de Bellota', precio:'17 €',
+              ingredientes:'Con patatas y guarnición.' },
+            { categoria:'Carnes', nombre:'Solomillo de Cerdo', precio:'12 €',
+              ingredientes:'Con patatas y guarnición.' },
+            { categoria:'Carnes', nombre:'Solomillo de Cerdo a la Salsa Roquefort', precio:'15 €',
+              ingredientes:'Acompañado de patatas.' },
+            { categoria:'Carnes', nombre:'Solomillo al Pedro Ximénez', precio:'16 €',
+              ingredientes:'Con patatas.' },
+            { categoria:'Carnes', nombre:'Carrillada Ibérica de Bellota en Salsa', precio:'15 €',
+              ingredientes:'Con patatas.' },
+
+            // ---------------- PESCADOS ---------------------------------
+            { categoria:'Pescados', nombre:'Timbal de Salmón', precio:'12 €',
+              ingredientes:'Salmón ahumado, tomate, aguacate y reducción de PX.' },
+            { categoria:'Pescados', nombre:'Calamaritos a la Plancha', precio:'11 €' },
+            { categoria:'Pescados', nombre:'Rosada en Salsa de Gambas y Almejas', precio:'14 €' },
+            { categoria:'Pescados', nombre:'Atún a la Plancha', precio:'13 €',
+              ingredientes:'Con guarnición.' },
+
+            // ---------------- FREIDURÍA (media / ración) ----------------
+            { categoria:'Freiduría', nombre:'Croquetas de Pollo Caseras',     precioMedia:'6 €', precioRacion:'10 €' },
+            { categoria:'Freiduría', nombre:'Croquetas de Bacalao con Gambas',precioMedia:'6 €', precioRacion:'10 €' },
+            { categoria:'Freiduría', nombre:'Croquetas de Espinacas, Queso de Cabra y Piñones', precioMedia:'6 €', precioRacion:'10 €' },
+            { categoria:'Freiduría', nombre:'Lagrimitas de Pollo',            precioMedia:'5 €', precioRacion:'9 €' },
+            { categoria:'Freiduría', nombre:'Filetes de Pollo Empanado',                                            precioRacion:'10 €' },
+            { categoria:'Freiduría', nombre:'Calamaritos Fritos',             precioMedia:'8 €', precioRacion:'12 €' },
+            { categoria:'Freiduría', nombre:'Boquerones Fritos',              precioMedia:'7 €', precioRacion:'10 €' },
+            { categoria:'Freiduría', nombre:'Bacalao Frito',                  precioMedia:'8 €', precioRacion:'12 €' },
+            { categoria:'Freiduría', nombre:'Flamenquín Casero',                                                    precioRacion:'11 €' },
+            { categoria:'Freiduría', nombre:'San Jacobo al Roquefort Casero',                                       precioRacion:'12 €' },
+
+            // ---------------- POSTRES ----------------------------------
+            { categoria:'Postres', nombre:'Postres del día', precio:'—',
+              note:'Consultar camarero.' },
+
+            // ---------------- VINOS (copa / botella) -------------------
+            { categoria:'Vinos', nombre:'D.O. Rioja — Derroción Joven',          precioCopa:'2,80 €', precioBotella:'12 €' },
+            { categoria:'Vinos', nombre:'D.O. Rioja — Azabache Crianza',         precioCopa:'3,80 €', precioBotella:'18 €' },
+            { categoria:'Vinos', nombre:'D.O. Ribera del Duero — La Veguilla Roble', precioCopa:'3,80 €', precioBotella:'15 €' },
+            { categoria:'Vinos', nombre:'Blanco D.O. Rueda — Semidulce Castillo Miraflores', precioCopa:'3,20 €', precioBotella:'14 €' },
+            { categoria:'Vinos', nombre:'Blanco D.O. Rueda — Verdejo Mortiga',   precioCopa:'2,80 €', precioBotella:'12 €' },
+            { categoria:'Vinos', nombre:'D.O. Montilla-Moriles — Cobos (Fino)',  precioCopa:'1,20 €', precioBotella:'9 €' },
+            { categoria:'Vinos', nombre:'D.O. Montilla-Moriles — Tertulia (En rama)', precioCopa:'1,50 €', precioBotella:'11 €' },
+
+            // ---------------- EXTRAS -----------------------------------
+            { categoria:'Extras', nombre:'Canasta de Pan / Bautilos',     precio:'1,80 €' },
+            { categoria:'Extras', nombre:'Salsera de Alioli / Brava',     precio:'1,00 €' },
+            { categoria:'Extras', nombre:'Salsera de Roquefort',          precio:'0,80 €' },
+            { categoria:'Extras', nombre:'Salsera de Mayonesa',           precio:'0,80 €' },
+            { categoria:'Extras', nombre:'Salsera de Salsa Verde',        precio:'1,00 €' },
+        ];
+
+        // Assign deterministic ids
+        platos.forEach((p, i) => p.id = i + 1);
+
+        const notes = {
+            'Entrantes': 'Precios por <strong>media ración</strong> y <strong>ración</strong>.',
+            'Freiduría': 'Precios por <strong>media ración</strong> y <strong>ración</strong>. Productos elaborados al momento.',
+            'Vinos': 'Precios con IVA incluido. Pan / Bautilos no está incluido.',
+            'Postres': 'Tarta del día, casera, helados y más — pregunte a su camarero.',
+            'Carnes': 'Carnes ibéricas con guarnición de patatas y verduras.',
+        };
+
+        // ---------- RENDER ---------------------------------------------
+        const $ = (id) => document.getElementById(id);
+        const escapeHtml = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+
+        function renderCategories() {
+            const grid = $('grid-categories');
+            grid.innerHTML = categorias.map((c, i) => `
+                <button onclick="openCategory('${c.id.replace(/'/g, "\\'")}')"
+                    class="category-card rounded-2xl px-3 py-7 flex flex-col items-center justify-center text-center min-h-[9rem] hover:shadow-lg">
+                    <div class="font-display text-[10px] tracking-[0.5em] uppercase text-lc-accent mb-1">${String(i+1).padStart(2,'0')}</div>
+                    <div class="font-display text-lg sm:text-xl text-lc-dark uppercase tracking-[0.16em] leading-tight">${escapeHtml(c.id)}</div>
+                    <div class="mt-2 font-body italic text-sm text-lc-muted">${escapeHtml(c.tagline)}</div>
+                </button>
+            `).join('');
+        }
+
+        function priceRow(p) {
+            if (p.precioCopa || p.precioBotella) {
+                return `
+                    <div class="flex items-baseline gap-8 sm:gap-10 text-lc-burg">
+                        <span class="font-display text-lg sm:text-xl tracking-wide w-[3.5rem] text-right">${escapeHtml(p.precioCopa || '—')}</span>
+                        <span class="font-display text-lg sm:text-xl tracking-wide w-[3.5rem] text-right">${escapeHtml(p.precioBotella || '—')}</span>
+                    </div>`;
+            }
+            if (p.precioMedia || p.precioRacion) {
+                return `
+                    <div class="flex items-baseline gap-8 sm:gap-10 text-lc-burg">
+                        <span class="font-display text-lg sm:text-xl tracking-wide w-[3.5rem] text-right">${escapeHtml(p.precioMedia || '—')}</span>
+                        <span class="font-display text-lg sm:text-xl tracking-wide w-[3.5rem] text-right">${escapeHtml(p.precioRacion || '—')}</span>
+                    </div>`;
+            }
+            return `<div class="font-display text-lg sm:text-xl text-lc-burg tracking-wide whitespace-nowrap">${escapeHtml(p.precio || '')}</div>`;
+        }
+
+        function openCategory(catId) {
+            const items = platos.filter(p => p.categoria === catId);
+            $('section-title').innerText = catId;
+            $('view-categories').classList.add('hidden');
+            $('view-items').classList.remove('hidden');
+            $('btn-back').classList.remove('hidden');
+            $('header-brand').classList.add('hidden');
+
+            const sub = $('section-subtitle');
+            if (notes[catId]) {
+                sub.innerHTML = notes[catId];
+                sub.classList.remove('hidden');
+            } else {
+                sub.classList.add('hidden');
+                sub.innerHTML = '';
+            }
+
+            // toggle price headers
+            $('price-header').classList.toggle('hidden', !(catId === 'Entrantes' || catId === 'Freiduría'));
+            $('wine-header').classList.toggle('hidden', catId !== 'Vinos');
+
+            const list = $('list-items');
+            list.innerHTML = items.map(p => `
+                <li>
+                    <button onclick="openDetail(${p.id})"
+                        class="w-full text-left bg-lc-card border border-lc-dark/15 rounded-xl px-4 py-3 sm:px-5 sm:py-4 shadow-sm hover:shadow-md hover:border-lc-accent/60 active:scale-[0.99] transition flex items-baseline gap-3">
+                        <span class="font-body text-lg sm:text-xl text-lc-dark leading-snug">${escapeHtml(p.nombre)}</span>
+                        <span class="dot-leader" aria-hidden="true"></span>
+                        ${priceRow(p)}
+                    </button>
+                    ${p.ingredientes ? `<p class="font-body italic text-sm text-lc-muted px-5 mt-1 leading-relaxed">${escapeHtml(p.ingredientes)}</p>` : ''}
+                </li>
+            `).join('') || '<li class="text-center italic text-lc-muted py-10">Próximamente.</li>';
+
+            history.pushState({ view: 'items', cat: catId }, '');
+            window.scrollTo({top: 0, behavior: 'instant'});
+        }
+
+        function showCategories() {
+            $('view-items').classList.add('hidden');
+            $('view-categories').classList.remove('hidden');
+            $('btn-back').classList.add('hidden');
+            $('header-brand').classList.remove('hidden');
+            window.scrollTo({top: 0, behavior: 'instant'});
+        }
+
+        function openDetail(id) {
+            const p = platos.find(x => x.id === id);
+            if (!p) return;
+            $('detail-cat').innerText = p.categoria;
+            $('detail-name').innerText = p.nombre;
+
+            const priceBlocks = [];
+            if (p.precioCopa || p.precioBotella) {
+                priceBlocks.push(`<div class="text-center"><div class="font-display text-[10px] tracking-[0.45em] uppercase text-lc-muted mb-1">Copa</div><div class="font-display text-3xl text-lc-burg">${escapeHtml(p.precioCopa || '—')}</div></div>`);
+                priceBlocks.push(`<div class="text-center"><div class="font-display text-[10px] tracking-[0.45em] uppercase text-lc-muted mb-1">Botella</div><div class="font-display text-3xl text-lc-burg">${escapeHtml(p.precioBotella || '—')}</div></div>`);
+            } else if (p.precioMedia || p.precioRacion) {
+                priceBlocks.push(`<div class="text-center"><div class="font-display text-[10px] tracking-[0.45em] uppercase text-lc-muted mb-1">Media ración</div><div class="font-display text-3xl text-lc-burg">${escapeHtml(p.precioMedia || '—')}</div></div>`);
+                priceBlocks.push(`<div class="text-center"><div class="font-display text-[10px] tracking-[0.45em] uppercase text-lc-muted mb-1">Ración</div><div class="font-display text-3xl text-lc-burg">${escapeHtml(p.precioRacion || '—')}</div></div>`);
+            } else {
+                priceBlocks.push(`<div class="text-center"><div class="font-display text-[10px] tracking-[0.45em] uppercase text-lc-muted mb-1">Precio</div><div class="font-display text-4xl text-lc-burg">${escapeHtml(p.precio || '—')}</div></div>`);
+            }
+            $('detail-prices').innerHTML = priceBlocks.join('');
+
+            if (p.ingredientes) {
+                $('detail-ingredients').innerText = p.ingredientes;
+                $('detail-ingredients-block').classList.remove('hidden');
+            } else {
+                $('detail-ingredients-block').classList.add('hidden');
+            }
+
+            const note = $('detail-note');
+            if (p.note) {
+                note.innerText = p.note;
+                note.classList.remove('hidden');
+            } else {
+                note.classList.add('hidden');
+            }
+
+            const m = $('detail');
+            m.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            history.pushState({ view: 'detail' }, '');
+        }
+
+        function closeDetail() {
+            $('detail').classList.remove('open');
+            document.body.style.overflow = '';
+            if (history.state && history.state.view === 'detail') history.back();
+        }
+
+        function goBack() {
+            history.back();
+        }
+
+        window.addEventListener('popstate', () => {
+            const detailOpen = $('detail').classList.contains('open');
+            if (detailOpen) {
+                $('detail').classList.remove('open');
+                document.body.style.overflow = '';
+                return;
+            }
+            if (!$('view-items').classList.contains('hidden')) {
+                showCategories();
+            }
+        });
+
+        renderCategories();
+    </script>
+</body>
+</html>
