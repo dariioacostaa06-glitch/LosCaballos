@@ -145,15 +145,14 @@
 
     <!-- HEADER ----------------------------------------------------------- -->
     <header class="lc-header sticky top-0 z-40">
-        <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-center gap-4 min-h-[5.5rem] relative">
+        <div class="max-w-2xl mx-auto relative min-h-[5.5rem]">
             <button id="btn-back" onclick="goBack()"
                 class="hidden absolute left-3 top-1/2 -translate-y-1/2 text-xs px-3 py-1.5 rounded-full border border-lc-dark bg-white/70 hover:bg-lc-dark hover:text-white transition font-display tracking-widest uppercase">
                 ← Volver
             </button>
 
-            <div id="header-brand" class="flex items-center justify-center select-none">
-                <img src="cabecera-los-caballos.jpg" alt="Bar Los Caballos" class="h-16 sm:h-20 w-auto rounded-md shadow-sm">
-            </div>
+            <img id="header-brand" src="cabecera-los-caballos.jpg" alt="Bar Los Caballos"
+                 class="w-full h-auto block select-none">
         </div>
     </header>
 
