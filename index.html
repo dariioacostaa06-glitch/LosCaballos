@@ -119,11 +119,25 @@
         }
 
         /* Modal slide */
-        #detail {
+        #detail, #legend {
             transform: translateY(100%);
             transition: transform .45s cubic-bezier(.2,.7,.2,1);
         }
-        #detail.open { transform: translateY(0); }
+        #detail.open, #legend.open { transform: translateY(0); }
+
+        .alergeno-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            border: 1px solid rgba(107,36,36,0.35);
+            background: rgba(107,36,36,0.06);
+            color: var(--lc-burgundy);
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
     </style>
 </head>
 
@@ -171,6 +185,11 @@
                 Estos productos pueden contener sustancias alergénicas; si usted es alérgico consulte con los empleados del establecimiento.<br>
                 Tenemos a su disposición las fichas técnicas de los platos.
             </p>
+
+            <button onclick="openLegend()"
+                class="mx-auto mt-4 block text-xs tracking-[0.2em] uppercase underline decoration-dotted text-lc-accent hover:text-lc-burg transition font-display">
+                Ver leyenda de alérgenos
+            </button>
         </section>
 
         <!-- Vista platos -->
@@ -225,6 +244,11 @@
                     <p id="detail-ingredients" class="italic text-lc-dark leading-relaxed text-lg"></p>
                 </div>
 
+                <div id="detail-alergenos-block" class="hidden text-center mt-6">
+                    <h4 class="font-display text-[11px] tracking-[0.5em] uppercase text-lc-muted mb-2">Alérgenos</h4>
+                    <div id="detail-alergenos" class="flex flex-wrap justify-center gap-2"></div>
+                </div>
+
                 <div id="detail-note" class="hidden mt-6 text-center text-sm text-lc-muted italic"></div>
             </div>
 
@@ -234,6 +258,39 @@
             </button>
 
             <p class="mt-8 text-center font-display text-[11px] tracking-[0.5em] uppercase text-lc-accent/70">· Bar Los Caballos ·</p>
+        </div>
+    </div>
+
+    <!-- MODAL LEYENDA DE ALÉRGENOS ---------------------------------------- -->
+    <div id="legend" class="fixed inset-0 z-50 bg-lc-bg overflow-y-auto">
+        <button onclick="closeLegend()"
+            class="absolute top-5 right-5 w-11 h-11 rounded-full bg-lc-dark text-white text-xl font-bold shadow-lg hover:scale-105 transition flex items-center justify-center"
+            aria-label="Cerrar">✕</button>
+
+        <div class="max-w-md mx-auto px-6 pt-16 pb-12">
+
+            <div class="ornament mb-2">
+                <span class="font-display text-[11px] tracking-[0.5em] uppercase text-lc-accent">Información</span>
+            </div>
+
+            <h2 class="font-display text-3xl sm:text-4xl text-lc-dark text-center leading-tight uppercase tracking-wide mb-8">
+                Alérgenos
+            </h2>
+
+            <div class="paper rounded-2xl border border-lc-dark/15 shadow-md p-6 sm:p-8 mb-6">
+                <ul id="legend-list" class="grid grid-cols-1 gap-3">
+                    <!-- filled dynamically -->
+                </ul>
+            </div>
+
+            <p class="text-[12px] text-center text-lc-muted italic px-2 leading-relaxed mb-8">
+                Estos productos pueden contener sustancias alergénicas; si usted es alérgico consulte con los empleados del establecimiento. Tenemos a su disposición las fichas técnicas de los platos.
+            </p>
+
+            <button onclick="closeLegend()"
+                class="w-full bg-lc-dark text-white py-4 rounded-full font-display tracking-[0.3em] uppercase text-xs hover:opacity-90 active:scale-95 transition">
+                Cerrar
+            </button>
         </div>
     </div>
 
@@ -254,33 +311,51 @@
 
         const IMG = (slug) => `imagenes/${slug}.webp`;
 
+        // Los 14 alérgenos de declaración obligatoria (Reglamento UE 1169/2011)
+        const ALERGENOS_INFO = {
+            'Gluten':            { icon: '🌾', nombre: 'Gluten' },
+            'Crustáceos':        { icon: '🦐', nombre: 'Crustáceos' },
+            'Huevo':             { icon: '🥚', nombre: 'Huevos' },
+            'Pescado':           { icon: '🐟', nombre: 'Pescado' },
+            'Cacahuetes':        { icon: '🥜', nombre: 'Cacahuetes' },
+            'Soja':              { icon: '🫘', nombre: 'Soja' },
+            'Leche':             { icon: '🥛', nombre: 'Leche y derivados' },
+            'Frutos de cáscara': { icon: '🌰', nombre: 'Frutos de cáscara' },
+            'Apio':              { icon: '🥬', nombre: 'Apio' },
+            'Mostaza':           { icon: '🟡', nombre: 'Mostaza' },
+            'Sésamo':            { icon: '⚪', nombre: 'Granos de sésamo' },
+            'Sulfitos':          { icon: '🍷', nombre: 'Dióxido de azufre y sulfitos' },
+            'Altramuces':        { icon: '🫛', nombre: 'Altramuces' },
+            'Moluscos':          { icon: '🐚', nombre: 'Moluscos' },
+        };
+
         const platos = [
             // ---------------- ENTRANTES (media / ración) ----------------
-            { categoria:'Entrantes', foto:IMG('patatas-bravas'),   nombre:'Patatas Bravas',              precioMedia:'7 €', precioRacion:'10 €' },
-            { categoria:'Entrantes', foto:IMG('patatas-alioli'),   nombre:'Patatas Alioli',              precioMedia:'7 €', precioRacion:'10 €' },
-            { categoria:'Entrantes', foto:IMG('berenjenas-miel'),  nombre:'Berenjenas a la miel de caña', precioMedia:'6 €', precioRacion:'10 €' },
-            { categoria:'Entrantes', foto:IMG('gambas-ajillo'),    nombre:'Gambas al ajillo',            precioMedia:'8 €', precioRacion:'13 €' },
+            { categoria:'Entrantes', foto:IMG('patatas-bravas'),   nombre:'Patatas Bravas',              precioMedia:'7 €', precioRacion:'10 €', alergenos:['Gluten','Sulfitos','Huevo'] },
+            { categoria:'Entrantes', foto:IMG('patatas-alioli'),   nombre:'Patatas Alioli',              precioMedia:'7 €', precioRacion:'10 €', alergenos:['Gluten','Sulfitos','Huevo'] },
+            { categoria:'Entrantes', foto:IMG('berenjenas-miel'),  nombre:'Berenjenas a la miel de caña', precioMedia:'6 €', precioRacion:'10 €', alergenos:['Gluten'] },
+            { categoria:'Entrantes', foto:IMG('gambas-ajillo'),    nombre:'Gambas al ajillo',            precioMedia:'8 €', precioRacion:'13 €', alergenos:['Crustáceos'] },
 
             // ---------------- ENSALADAS --------------------------------
             { categoria:'Ensaladas', foto:IMG('ensalada-mixta'), nombre:'Ensalada Mixta', precio:'7 €',
-              ingredientes:'Lechuga, tomate, huevo duro, remolacha, ensalada china, espárragos, aceitunas y atún.' },
+              ingredientes:'Lechuga, tomate, huevo duro, remolacha, ensalada china, espárragos, aceitunas y atún.', alergenos:['Huevo','Pescado','Sulfitos'] },
             { categoria:'Ensaladas', foto:IMG('ensalada-casa'), nombre:'Ensalada Especial de la Casa', precio:'10 €',
-              ingredientes:'Lechuga, tomate, huevo duro, remolacha, ensalada china, queso fresco, piña, melocotón, jamón cocido, atún y frutos secos.' },
+              ingredientes:'Lechuga, tomate, huevo duro, remolacha, ensalada china, queso fresco, piña, melocotón, jamón cocido, atún y frutos secos.', alergenos:['Huevo','Pescado','Sulfitos','Leche'] },
             { categoria:'Ensaladas', foto:IMG('ensalada-refrescante'), nombre:'Ensalada Refrescante', precio:'8 €',
-              ingredientes:'Lechuga, tomate, huevo duro, remolacha, ensalada china, queso fresco, espárragos, nueces y atún.' },
+              ingredientes:'Lechuga, tomate, huevo duro, remolacha, ensalada china, queso fresco, espárragos, nueces y atún.', alergenos:['Huevo','Pescado','Sulfitos','Leche'] },
 
             // ---------------- REVUELTOS Y TORTILLAS ---------------------
             { categoria:'Revueltos y Tortillas', foto:IMG('revuelto-campestre'), nombre:'Revuelto Campestre', precio:'10 €',
-              ingredientes:'Espárragos, champiñón, gambas y jamón.' },
-            { categoria:'Revueltos y Tortillas', foto:IMG('revuelto-bacalao'),   nombre:'Revuelto de Bacalao con Gambas', precio:'12 €' },
+              ingredientes:'Espárragos, champiñón, gambas y jamón.', alergenos:['Huevo','Crustáceos'] },
+            { categoria:'Revueltos y Tortillas', foto:IMG('revuelto-bacalao'),   nombre:'Revuelto de Bacalao con Gambas', precio:'12 €', alergenos:['Crustáceos','Huevo'] },
             { categoria:'Revueltos y Tortillas', foto:IMG('revuelto-setas'),     nombre:'Revuelto de Setas a la Montillana', precio:'10 €',
-              ingredientes:'Setas, gambas y jamón.' },
+              ingredientes:'Setas, gambas y jamón.', alergenos:['Crustáceos','Huevo'] },
 
             // ---------------- CARNES -----------------------------------
             { categoria:'Carnes', foto:IMG('filete-pollo-plancha'), nombre:'Filete de Pollo a la Plancha', precio:'10 €',
               ingredientes:'Con patatas fritas.' },
             { categoria:'Carnes', foto:IMG('pollo-roquefort'), nombre:'Pollo en Salsa Roquefort', precio:'13 €',
-              ingredientes:'Acompañado de patatas.' },
+              ingredientes:'Acompañado de patatas.', alergenos:['Leche'] },
             { categoria:'Carnes', foto:IMG('pluma-iberica'), nombre:'Pluma Ibérica de Bellota', precio:'18 €',
               ingredientes:'Con patatas y guarnición.' },
             { categoria:'Carnes', foto:IMG('presa-iberica'), nombre:'Presa Ibérica de Bellota', precio:'18 €',
@@ -288,7 +363,7 @@
             { categoria:'Carnes', foto:IMG('solomillo-cerdo'), nombre:'Solomillo de Cerdo', precio:'12 €',
               ingredientes:'Con patatas y guarnición.' },
             { categoria:'Carnes', foto:IMG('solomillo-roquefort'), nombre:'Solomillo de Cerdo a la Salsa Roquefort', precio:'15 €',
-              ingredientes:'Acompañado de patatas.' },
+              ingredientes:'Acompañado de patatas.', alergenos:['Leche'] },
             { categoria:'Carnes', foto:IMG('solomillo-px'), nombre:'Solomillo al Pedro Ximénez', precio:'16 €',
               ingredientes:'Con patatas.' },
             { categoria:'Carnes', foto:IMG('carrillada-iberica'), nombre:'Carrillada Ibérica de Bellota en Salsa', precio:'15 €',
@@ -296,21 +371,21 @@
 
             // ---------------- PESCADOS ---------------------------------
             { categoria:'Pescados', foto:IMG('timbal-salmon'),       nombre:'Timbal de Salmón', precio:'12 €',
-              ingredientes:'Salmón ahumado, tomate, aguacate y reducción de PX.' },
-            { categoria:'Pescados', foto:IMG('calamaritos-plancha'), nombre:'Calamaritos a la Plancha', precio:'11 €' },
-            { categoria:'Pescados', foto:IMG('rosada-gambas'),       nombre:'Rosada en Salsa de Gambas y Almejas', precio:'14 €' },
+              ingredientes:'Salmón ahumado, tomate, aguacate y reducción de PX.', alergenos:['Pescado','Sulfitos','Soja','Frutos de cáscara'] },
+            { categoria:'Pescados', foto:IMG('calamaritos-plancha'), nombre:'Calamaritos a la Plancha', precio:'11 €', alergenos:['Moluscos'] },
+            { categoria:'Pescados', foto:IMG('rosada-gambas'),       nombre:'Rosada en Salsa de Gambas y Almejas', precio:'14 €', alergenos:['Pescado','Crustáceos','Moluscos'] },
 
             // ---------------- FREIDURÍA (media / ración) ----------------
-            { categoria:'Freiduría', foto:IMG('croquetas-pollo'),         nombre:'Croquetas de Pollo Caseras',     precioMedia:'6 €', precioRacion:'10 €' },
-            { categoria:'Freiduría', foto:IMG('croquetas-bacalao'),       nombre:'Croquetas de Bacalao con Gambas',precioMedia:'6 €', precioRacion:'10 €' },
-            { categoria:'Freiduría', foto:IMG('croquetas-espinacas'),     nombre:'Croquetas de Espinacas, Queso de Cabra y Piñones', precioMedia:'6 €', precioRacion:'10 €' },
-            { categoria:'Freiduría', foto:IMG('lagrimitas-pollo'),        nombre:'Lagrimitas de Pollo',            precioMedia:'5 €', precioRacion:'9 €' },
-            { categoria:'Freiduría', foto:IMG('filetes-pollo-empanado'),  nombre:'Filetes de Pollo Empanado',                                            precioRacion:'10 €' },
-            { categoria:'Freiduría', foto:IMG('calamaritos-fritos'),      nombre:'Calamaritos Fritos',             precioMedia:'8 €', precioRacion:'12 €' },
-            { categoria:'Freiduría', foto:IMG('boquerones-fritos'),       nombre:'Boquerones Fritos',              precioMedia:'7 €', precioRacion:'10 €' },
-            { categoria:'Freiduría', foto:IMG('bacalao-frito'),           nombre:'Bacalao Frito',                  precioMedia:'8 €', precioRacion:'12 €' },
-            { categoria:'Freiduría', foto:IMG('flamenquin'),              nombre:'Flamenquín Casero',                                                    precioRacion:'11 €' },
-            { categoria:'Freiduría', foto:IMG('san-jacobo'),              nombre:'San Jacobo al Roquefort Casero',                                       precioRacion:'12 €' },
+            { categoria:'Freiduría', foto:IMG('croquetas-pollo'),         nombre:'Croquetas de Pollo Caseras',     precioMedia:'6 €', precioRacion:'10 €', alergenos:['Gluten','Leche','Huevo'] },
+            { categoria:'Freiduría', foto:IMG('croquetas-bacalao'),       nombre:'Croquetas de Bacalao con Gambas',precioMedia:'6 €', precioRacion:'10 €', alergenos:['Pescado','Gluten','Leche','Huevo'] },
+            { categoria:'Freiduría', foto:IMG('croquetas-espinacas'),     nombre:'Croquetas de Espinacas, Queso de Cabra y Piñones', precioMedia:'6 €', precioRacion:'10 €', alergenos:['Gluten','Leche','Huevo'] },
+            { categoria:'Freiduría', foto:IMG('lagrimitas-pollo'),        nombre:'Lagrimitas de Pollo',            precioMedia:'5 €', precioRacion:'9 €', alergenos:['Crustáceos (trazas)','Pescado','Soja','Moluscos','Frutos de cáscara'] },
+            { categoria:'Freiduría', foto:IMG('filetes-pollo-empanado'),  nombre:'Filetes de Pollo Empanado',                                            precioRacion:'10 €', alergenos:['Gluten','Leche','Huevo'] },
+            { categoria:'Freiduría', foto:IMG('calamaritos-fritos'),      nombre:'Calamaritos Fritos',             precioMedia:'8 €', precioRacion:'12 €', alergenos:['Moluscos','Gluten'] },
+            { categoria:'Freiduría', foto:IMG('boquerones-fritos'),       nombre:'Boquerones Fritos',              precioMedia:'7 €', precioRacion:'10 €', alergenos:['Pescado','Gluten'] },
+            { categoria:'Freiduría', foto:IMG('bacalao-frito'),           nombre:'Bacalao Frito',                  precioMedia:'8 €', precioRacion:'12 €', alergenos:['Pescado','Gluten'] },
+            { categoria:'Freiduría', foto:IMG('flamenquin'),              nombre:'Flamenquín Casero',                                                    precioRacion:'11 €', alergenos:['Gluten','Leche','Huevo'] },
+            { categoria:'Freiduría', foto:IMG('san-jacobo'),              nombre:'San Jacobo al Roquefort Casero',                                       precioRacion:'12 €', alergenos:['Leche','Gluten','Huevo'] },
 
             // ---------------- POSTRES ----------------------------------
             { categoria:'Postres', foto:IMG('postres'), nombre:'Postres del día', precio:'—',
@@ -347,6 +422,14 @@
         // ---------- RENDER ---------------------------------------------
         const $ = (id) => document.getElementById(id);
         const escapeHtml = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+
+        function alergenoIcon(a) {
+            const base = a.replace(/\s*\(trazas\)/i, '').trim();
+            return (ALERGENOS_INFO[base] && ALERGENOS_INFO[base].icon) || '⚠️';
+        }
+        function alergenoChip(a) {
+            return `<span class="alergeno-chip">${alergenoIcon(a)} ${escapeHtml(a)}</span>`;
+        }
 
         function renderCategories() {
             const grid = $('grid-categories');
@@ -465,6 +548,13 @@
                 $('detail-ingredients-block').classList.add('hidden');
             }
 
+            if (p.alergenos && p.alergenos.length) {
+                $('detail-alergenos').innerHTML = p.alergenos.map(alergenoChip).join('');
+                $('detail-alergenos-block').classList.remove('hidden');
+            } else {
+                $('detail-alergenos-block').classList.add('hidden');
+            }
+
             const note = $('detail-note');
             if (p.note) {
                 note.innerText = p.note;
@@ -485,14 +575,43 @@
             if (history.state && history.state.view === 'detail') history.back();
         }
 
+        function renderLegend() {
+            const ul = $('legend-list');
+            ul.innerHTML = Object.values(ALERGENOS_INFO).map(info => `
+                <li class="flex items-center gap-3">
+                    <span class="text-2xl w-8 text-center shrink-0">${info.icon}</span>
+                    <span class="font-body text-lc-dark text-lg">${info.nombre}</span>
+                </li>
+            `).join('');
+        }
+
+        function openLegend() {
+            renderLegend();
+            $('legend').classList.add('open');
+            document.body.style.overflow = 'hidden';
+            history.pushState({ view: 'legend' }, '');
+        }
+
+        function closeLegend() {
+            $('legend').classList.remove('open');
+            document.body.style.overflow = '';
+            if (history.state && history.state.view === 'legend') history.back();
+        }
+
         function goBack() {
             history.back();
         }
 
         window.addEventListener('popstate', () => {
             const detailOpen = $('detail').classList.contains('open');
+            const legendOpen = $('legend').classList.contains('open');
             if (detailOpen) {
                 $('detail').classList.remove('open');
+                document.body.style.overflow = '';
+                return;
+            }
+            if (legendOpen) {
+                $('legend').classList.remove('open');
                 document.body.style.overflow = '';
                 return;
             }
